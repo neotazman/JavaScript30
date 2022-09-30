@@ -71,7 +71,7 @@
   </style>
 
   <script>
-    const hands = {
+    const hands = { // to store all the query selectors
       hour: document.querySelector('.hour-hand'),
       minute: document.querySelector('.min-hand'),
       second: document.querySelector('.second-hand'),
@@ -79,14 +79,18 @@
 
     function setDate() {
       const now = new Date()
-      const hour = now.getHours()
-      const minute = now.getMinutes()
+      const hours = now.getHours()
+      const minutes = now.getMinutes()
       const seconds = now.getSeconds()
-
-      const getDegrees = (time) => ((time / 60) * 360) + 90
       
-      hands.second.style.transform = `rotate(${getDegrees(seconds)}deg)`
-      console.log(seconds)
+
+      const getDegrees = (time) => ((time / 60) * 360) + 90 // function to turn time into degrees
+      const getHourDegrees = (time) => time - 12 > 0 ? (((time - 12) / 12) * 360) + 90 : ((time / 24) * 360) + 90 // hours work differently than minutes and seconds
+      const styleRotate = (degrees) => `rotate(${degrees}deg)`
+
+      hands.hour.style.transform = styleRotate(getHourDegrees(hours))
+      hands.minute.style.transform = styleRotate(getDegrees(minutes))
+      hands.second.style.transform = styleRotate(getDegrees(seconds))
     }
 
     setInterval(setDate, 1000)
