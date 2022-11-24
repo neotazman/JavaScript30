@@ -17,18 +17,19 @@
 <script>
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
-const cities = []
+const allCities = []
 
 fetch(endpoint)
   .then((response) => response.json())
-  .then((data) => cities.push(...data))
+  .then((data) => allCities.push(...data))
 
-function findCity (wordToMatch, cities) {
+function findCity(wordToMatch, cities) {
   return cities.filter(place => {
-    return place.city.match()
+    const regex = new RegExp(wordToMatch, 'gi');
+    return place.city.match(regex) || place.state.match(regex)
   })
 }
-console.log(cities)
+console.log(findCity('ma', allCities))
 </script>
 </body>
 </html>
