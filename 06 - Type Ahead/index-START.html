@@ -29,7 +29,32 @@ function findCity(wordToMatch, cities) {
     return place.city.match(regex) || place.state.match(regex)
   })
 }
-console.log(findCity('ma', allCities))
+
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function displayCities() {
+  const matchArray = findCity(this.value, allCities);
+  const returnList = matchArray.map(place => {
+    const regex = new RegExp(this.value, 'gi');
+    const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`)
+    const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`)
+    return `
+      <li>
+        <span class="name">${cityName}, ${stateName}</span>
+        <span class="population">${numberWithCommas(place.population)}</span>
+      </li>
+    `
+  }).join('')
+  suggestionInput.innerHTML = returnList
+}
+
+const searchInput = document.querySelector('.search')
+const suggestionInput = document.querySelector('.suggestions')
+
+searchInput.addEventListener('change', displayCities)
+searchInput.addEventListener('keyup', displayCities)
 </script>
 </body>
 </html>
