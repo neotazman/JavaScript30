@@ -5,13 +5,15 @@
   <title>HTML5 Canvas</title>
 </head>
 <body>
+  <img id="exampleLink" display="hidden"></img> <!-- this will work eventually /!-->
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
   const canvas = document.querySelector("#draw");
-  ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext("2d");
+  const exampleLink = document.querySelector("#exampleLink");
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
-  ctx.strokeStyle = 'crimson'
+  ctx.strokeStyle = 'crimson' // needs a starting value, but gets overwritten
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
   ctx.lineWidth = 99
@@ -22,11 +24,20 @@
   let lastY = 0;
   let hue = 0;
   let direction = true;
+  let opacity = 100
+
 
   function draw(event) {
     if(!isDrawing) return;
+    if(ctx.lineWidth <= 100) {
+      opacity = ctx.lineWidth
+      ctx.globalCompositeOperation = 'multiply'; // darkens the color when you paint colors over each other
+    } else {
+      opacity = ctx.lineWidth - 100
+      ctx.globalCompositeOperation = 'source-over' // covers the canvas with the new paint
+    }
     [lastX, lastY] = [event.offsetX, event.offsetY] // destructuring an array -- updating two variables at once
-    ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`
+    ctx.strokeStyle = `hsl(${hue}, 100%, ${opacity}%)`
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(event.offsetX, event.offsetY);
@@ -36,7 +47,7 @@
       hue = 0
     }
 
-    if(ctx.lineWidth >= 150 || ctx.lineWidth <= 1) {
+    if(ctx.lineWidth >= 200 || ctx.lineWidth <= 1) {
       direction = !direction
     }
     if(direction) {
@@ -53,6 +64,16 @@
   canvas.addEventListener('mousemove', draw)
   canvas.addEventListener('mouseup', () => isDrawing = false)
   canvas.addEventListener('mouseout', () => isDrawing = false) // mouseout means when the mouse moves off the cnavas, good for mouse games
+  window.addEventListener('keydown', (event) => {
+    if(event.key === 'p') {
+      let imgSrc = canvas.toDataURL()
+      exampleLink.display = 'block'
+      exampleLink.src = imgSrc
+      // window.open(imgSrc, null) // doesn't work with most browsers anymore :'(
+
+      console.log(imgSrc)
+    }
+  })
 </script>
 
 <style>
